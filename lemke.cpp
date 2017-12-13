@@ -11,8 +11,8 @@ struct LCP {
   Array1D q;
   Array2D M;
 
-  void read(void);
-  void print(void);
+  void read_LCP(void);
+  void print_LCP(void);
 };
 
 int main() {
@@ -50,7 +50,7 @@ void print(Array2D& m) {
     print(m[i]);
 }
 
-void LCP::read() {
+void LCP::read_LCP() {
   int n;
   // problem size
   std::cin >> n;
@@ -65,9 +65,9 @@ void LCP::read() {
       std::cin >> M[i][j];
 }
 
-void LCP::print() {
+void LCP::print_LCP() {
   // print problem statement: size, q and M
   std::cout << q.size() << std::endl;
-  ::print(q);
-  ::print(M);
+  print(q);
+  print(M);
 }
