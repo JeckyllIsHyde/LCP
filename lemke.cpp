@@ -20,6 +20,18 @@ int main() {
   
   problem.print();
 
+  // make lemke's tableau
+  int n = problem.q.size();
+  LCP::Array2D tableau(n, LCP::Array1D(2*n+2,0.0));
+  for (int i=0; i<n; i++) {
+    tableau[i][i] = 1.0;
+    tableau[i][2*n] = -1.0;
+    tableau[i][2*n+1] = problem.q[i];
+  }
+  for (int i=0; i<n; i++)
+    for (int j=0; j<n; j++)
+      tableau[i][j+n] = problem.M[i][j];
+
   return 0;
 }
 
