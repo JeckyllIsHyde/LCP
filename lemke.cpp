@@ -20,9 +20,9 @@ int main() {
   // lemke's algorithm
   LCP problem;
   
-  problem.read();
+  problem.read_LCP();
   
-  problem.print();
+  problem.print_LCP();
 
   // make lemke's tableau
   int n = problem.q.size();
