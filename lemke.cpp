@@ -15,6 +15,7 @@ struct LCP {
   void read_LCP(void);
   void print_LCP(void);
   void make_tableau();
+  void lemke_algorithm();
 };
 
 int main() {
@@ -26,9 +27,7 @@ int main() {
   
   problem.print_LCP();
 
-  problem.make_tableau();
-
-  print(problem.tableau);
+  problem.lemke_algorithm();
 
   return 0;
 }
@@ -78,4 +77,29 @@ void LCP::make_tableau() {
   for (int i=0; i<n; i++)
     for (int j=0; j<n; j++)
       tableau[i][j+n] = M[i][j];
+}
+
+void LCP::lemke_algorithm() {
+  make_tableau();
+
+  print(tableau);
+
+  // step 1. z0 -> Basis:
+  int n = tableau.size();
+  int idx = -1;
+  double qmin = tableau[0][2*n+2];
+  //    exist(qi<0) and argmin_i qi
+  for (int i=0; i<n; i++)
+    if (tableau[i][2*n+1]<qmin && tableau[i][2*n+1]<0.0) {
+      idx = i;
+      qmin = tableau[i][2*n+1];
+    }
+  std::cout << qmin << std::endl;
+  if (idx==-1) {
+    std::cout << "Find Solution!!!\nz = \n";
+    for (int i=0; i<n; i++)
+      std::cout << tableau[i][2*n+1] << " ";
+    std::cout << std::endl;
+    return;
+  }
 }
