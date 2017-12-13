@@ -86,8 +86,13 @@ void LCP::lemke_algorithm() {
 
   print(tableau);
 
-  // step 1. z0 -> Basis:
   int n = tableau.size();
+  // create and init basis indicator
+  std::vector<unsigned int> basis(2*n+1,0.0);
+  for (int i=0; i<n; i++)
+    basis[i]=1.0;
+
+  // step 1. z0 -> Basis:
   int idx = -1;
   double qmin = tableau[0][2*n+2];
   //    exist(qi<0) and argmin_i qi
@@ -104,14 +109,18 @@ void LCP::lemke_algorithm() {
     std::cout << std::endl;
     return;
   }
+  // z0 -> Basis and basis -> wi
+  int p_idx = 2*n;
   // step 2. row operations in idx-row to enter basis
   for (int i=0; i<n; i++) {
     if (i==idx)
       continue;
-    reduce_from_with_pivot(i,idx,2*n);
+    reduce_from_with_pivot(i,idx,p_idx);
   }
-  reduce_from_with_pivot(idx,idx,2*n);
+  reduce_from_with_pivot(idx,idx,p_idx);
+  basis[idx] = 0; basis[p_idx] = 1;
   print(tableau);
+  // step 3. i-row exit and j-column complement enter the basis
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
