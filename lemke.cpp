@@ -8,6 +8,7 @@ struct LCP {
   Array2D M;
 
   void read(void);
+  void print(void);
 };
 
 int main() {
@@ -16,17 +17,9 @@ int main() {
   LCP problem;
   
   problem.read();
-
-  std::cout << problem.q.size() << std::endl;
-  for (int i=0; i<problem.q.size(); i++)
-    std::cout << problem.q[i] << " ";
-  std::cout << std::endl;
-  for (int i=0; i<problem.M.size(); i++) {
-    for (int j=0; j<problem.M[i].size(); j++)
-      std::cout << problem.M[i][j] << " ";
-    std::cout << std::endl;
-  }
   
+  problem.print();
+
   return 0;
 }
 
@@ -43,4 +36,17 @@ void LCP::read() {
   for (int i=0; i<M.size(); i++)
     for (int j=0; j<M[i].size(); j++)
       std::cin >> M[i][j];
+}
+
+void LCP::print() {
+  // print problem statement: size, q and M
+  std::cout << problem.q.size() << std::endl;
+  for (int i=0; i<problem.q.size(); i++)
+    std::cout << problem.q[i] << " ";
+  std::cout << std::endl;
+  for (int i=0; i<problem.M.size(); i++) {
+    for (int j=0; j<problem.M[i].size(); j++)
+      std::cout << problem.M[i][j] << " ";
+    std::cout << std::endl;
+  }
 }
