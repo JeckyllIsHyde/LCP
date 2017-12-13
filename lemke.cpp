@@ -122,7 +122,24 @@ void LCP::lemke_algorithm() {
   print(tableau);
   // step 3. i-row exit and j-column complement enter the basis
   (idx<n)? idx+=n: idx-=n;
-  std::cout << idx << "enter the basis" << std::endl;
+  std::cout << idx << " enter the basis" << std::endl;
+  // step 4.
+  p_idx = idx;
+  idx = -1;
+  double rmin = tableau[0][2*n+2]/tableau[0][p_idx];
+  for (int i=0; i<n; i++)
+    if (tableau[i][2*n+2]/tableau[i][p_idx]<=rmin &&
+        0.0<tableau[i][p_idx]) {
+      idx=i;
+      rmin=tableau[i][2*n+2]/tableau[i][p_idx];
+    }
+  std::cout << rmin << std::endl;
+  std::cout << "out: " << idx << std::endl;
+  if (idx==-1) {
+    std::cout << "Ray Solution!!!\n";
+    return;
+  }
+  
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
