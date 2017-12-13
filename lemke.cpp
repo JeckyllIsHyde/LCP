@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 
+typedef std::vector<double> Array1D;
+typedef std::vector< Array1D > Array2D;
+
 struct LCP {
-  typedef std::vector<double> Array1D;
-  typedef std::vector< Array1D > Array2D;
   Array1D q;
   Array2D M;
 
@@ -22,7 +23,7 @@ int main() {
 
   // make lemke's tableau
   int n = problem.q.size();
-  LCP::Array2D tableau(n, LCP::Array1D(2*n+2,0.0));
+  Array2D tableau(n, Array1D(2*n+2,0.0));
   for (int i=0; i<n; i++) {
     tableau[i][i] = 1.0;
     tableau[i][2*n] = -1.0;
