@@ -4,6 +4,9 @@
 typedef std::vector<double> Array1D;
 typedef std::vector< Array1D > Array2D;
 
+void print(Array1D& v);
+void print(Array2D& m);
+
 struct LCP {
   Array1D q;
   Array2D M;
@@ -36,6 +39,17 @@ int main() {
   return 0;
 }
 
+void print(Array1D& v) {
+  for (int i=0; i<v.size(); i++)
+    std::cout << v[i] << " ";
+  std::cout << std::endl;
+}
+
+void print(Array2D& m) {
+  for (int i=0; i<m.size(); i++)
+    print(m[i]);
+}
+
 void LCP::read() {
   int n;
   // problem size
@@ -54,12 +68,6 @@ void LCP::read() {
 void LCP::print() {
   // print problem statement: size, q and M
   std::cout << q.size() << std::endl;
-  for (int i=0; i<q.size(); i++)
-    std::cout << q[i] << " ";
-  std::cout << std::endl;
-  for (int i=0; i<M.size(); i++) {
-    for (int j=0; j<M[i].size(); j++)
-      std::cout << M[i][j] << " ";
-    std::cout << std::endl;
-  }
+  ::print(q);
+  ::print(M);
 }
