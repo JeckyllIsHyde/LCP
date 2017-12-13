@@ -121,6 +121,8 @@ void LCP::lemke_algorithm() {
   basis[idx] = 0; basis[p_idx] = 1;
   print(tableau);
   // step 3. i-row exit and j-column complement enter the basis
+  (idx<n)? idx+=n: idx-=n;
+  std::cout << idx << "enter the basis" << std::endl;
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
