@@ -17,7 +17,7 @@ struct LCP {
   void make_tableau();
   void lemke_algorithm();
 
-  void reduce_from(int i, int idx, int p_idx);
+  void reduce_from_with_pivot(int i, int idx, int p_idx);
 };
 
 int main() {
@@ -108,13 +108,13 @@ void LCP::lemke_algorithm() {
   for (int i=0; i<n; i++) {
     if (i==idx)
       continue;
-    reduce_from(i,idx,2*n);
+    reduce_from_with_pivot(i,idx,2*n);
   }
-  reduce_from(idx,idx,2*n);
+  reduce_from_with_pivot(idx,idx,2*n);
   print(tableau);
 }
 
-void LCP::reduce_from(int i, int idx, int p_idx) {
+void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
   int n = q.size();
   int m = 2*n+2;
   double pivot = tableau[idx][p_idx];
