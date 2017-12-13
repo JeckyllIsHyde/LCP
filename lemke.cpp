@@ -16,6 +16,8 @@ struct LCP {
   void print_LCP(void);
   void make_tableau();
   void lemke_algorithm();
+
+  void reduce_from(int i, int idx, int p_idx);
 };
 
 int main() {
@@ -101,5 +103,27 @@ void LCP::lemke_algorithm() {
       std::cout << tableau[i][2*n+1] << " ";
     std::cout << std::endl;
     return;
+  }
+  // step 2. row operations in idx-row to enter basis
+  for (int i=0; i<n; i++) {
+    if (i==idx)
+      continue;
+    reduce_from(i,idx,2*n);
+  }
+  reduce_from(idx,idx,2*n);
+  print(tableau);
+}
+
+void LCP::reduce_from(int i, int idx, int p_idx) {
+  int n = q.size();
+  int m = 2*n+2;
+  double pivot = tableau[idx][p_idx];
+  if (i==idx)
+    for (int j=0; j<m; j++)
+      tableau[idx][j]/=pivot;
+  else {
+    double bij=tableau[i][p_idx]/pivot;
+    for (int j=0; j<m; j++)
+      tableau[i][j]-=tableau[idx][j]*bij;
   }
 }
