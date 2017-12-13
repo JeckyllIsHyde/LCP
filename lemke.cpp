@@ -40,13 +40,13 @@ void LCP::read() {
 
 void LCP::print() {
   // print problem statement: size, q and M
-  std::cout << problem.q.size() << std::endl;
-  for (int i=0; i<problem.q.size(); i++)
-    std::cout << problem.q[i] << " ";
+  std::cout << q.size() << std::endl;
+  for (int i=0; i<q.size(); i++)
+    std::cout << q[i] << " ";
   std::cout << std::endl;
-  for (int i=0; i<problem.M.size(); i++) {
-    for (int j=0; j<problem.M[i].size(); j++)
-      std::cout << problem.M[i][j] << " ";
+  for (int i=0; i<M.size(); i++) {
+    for (int j=0; j<M[i].size(); j++)
+      std::cout << M[i][j] << " ";
     std::cout << std::endl;
   }
 }
