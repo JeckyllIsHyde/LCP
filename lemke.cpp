@@ -2,7 +2,7 @@
 #include <vector>
 
 typedef std::vector<double> Array1D;
-typedef std::vector< Array1D > Array2D;
+typedef std::vector<Array1D> Array2D;
 
 void print(Array1D& v);
 void print(Array2D& m);
@@ -10,9 +10,11 @@ void print(Array2D& m);
 struct LCP {
   Array1D q;
   Array2D M;
+  Array2D tableau;
 
   void read_LCP(void);
   void print_LCP(void);
+  void make_tableau();
 };
 
 int main() {
@@ -24,17 +26,9 @@ int main() {
   
   problem.print_LCP();
 
-  // make lemke's tableau
-  int n = problem.q.size();
-  Array2D tableau(n, Array1D(2*n+2,0.0));
-  for (int i=0; i<n; i++) {
-    tableau[i][i] = 1.0;
-    tableau[i][2*n] = -1.0;
-    tableau[i][2*n+1] = problem.q[i];
-  }
-  for (int i=0; i<n; i++)
-    for (int j=0; j<n; j++)
-      tableau[i][j+n] = problem.M[i][j];
+  problem.make_tableau();
+
+  print(problem.tableau);
 
   return 0;
 }
@@ -70,4 +64,18 @@ void LCP::print_LCP() {
   std::cout << q.size() << std::endl;
   print(q);
   print(M);
+}
+
+void LCP::make_tableau() {
+  // make lemke's tableau
+  int n = q.size();
+  tableau.resize(n, Array1D(2*n+2,0.0));
+  for (int i=0; i<n; i++) {
+    tableau[i][i] = 1.0;
+    tableau[i][2*n] = -1.0;
+    tableau[i][2*n+1] = q[i];
+  }
+  for (int i=0; i<n; i++)
+    for (int j=0; j<n; j++)
+      tableau[i][j+n] = M[i][j];
 }
