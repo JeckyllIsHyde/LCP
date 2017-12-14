@@ -95,26 +95,27 @@ void LCP::lemke_algorithm() {
     basis[i]=1.0;
 
   // step 1. z0 -> Basis:
-  int idx = -1;
+  int row_p = -1;
   double qmin = 1e18;
-  //    exist(qi<0) and argmin_i qi
-  for (int i=0; i<n; i++)
-    if (tableau[i][2*n+1]<qmin && tableau[i][2*n+1]<0.0) {
-      idx = i;
-      qmin = tableau[i][2*n+1];
+  // find initial row pivot
+  for (int i=0; i<n; i++) // exist(qi<0) and argmin_i qi
+    if (q[i]<=qmin
+	&& q[i]<0.0) {
+      row_p = i;
+      qmin = q[i];
     }
-  std::cout << qmin << std::endl;
-  if (idx==-1) {
-    std::cout << "Find Solution!!!\nz = \n";
-    for (int i=0; i<n; i++)
-      std::cout << tableau[i][2*n+1] << " ";
-    std::cout << std::endl;
+  // std::cout << qmin << std::endl;
+  if (row_p==-1) {
+    std::cout << "Find Solution!!!\nz = ";
+    print(q);
     return;
   }
   // z0 -> Basis and basis -> wi
-  int p_idx = 2*n;
+  int idx, p_idx, col_p = 2*n;
   // step 2. row operations in idx-row to enter basis
-  pivot_reduction(idx,p_idx);
+  pivot_reduction( row_p, col_p );
+  idx = row_p;
+  p_idx = col_p;
   basis[idx] = 0; basis[p_idx] = 1;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
