@@ -84,6 +84,7 @@ void LCP::make_tableau() {
 void LCP::lemke_algorithm() {
   make_tableau();
 
+  std::cout << "INITIAL TABLEAU: " << std::endl;
   print(tableau);
 
   int n = tableau.size();
@@ -119,10 +120,12 @@ void LCP::lemke_algorithm() {
   }
   reduce_from_with_pivot(idx,idx,p_idx);
   basis[idx] = 0; basis[p_idx] = 1;
+  std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
   // step 3. i-row exit and j-column complement enter the basis
   (idx<n)? idx+=n: idx-=n;
-  std::cout << idx << " enter the basis" << std::endl;
+  std::cout << idx << " exits the basis" << std::endl;
+  std::cout << idx << " enters the basis" << std::endl;
   // step 4.
   p_idx = idx;
   idx = -1;
