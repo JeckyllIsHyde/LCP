@@ -18,6 +18,7 @@ struct LCP {
   void lemke_algorithm();
 
   void reduce_from_with_pivot(int i, int idx, int p_idx);
+  void pivot_reduction(int& idx, int& p_idx);
 };
 
 int main() {
@@ -113,12 +114,7 @@ void LCP::lemke_algorithm() {
   // z0 -> Basis and basis -> wi
   int p_idx = 2*n;
   // step 2. row operations in idx-row to enter basis
-  for (int i=0; i<n; i++) {
-    if (i==idx)
-      continue;
-    reduce_from_with_pivot(i,idx,p_idx);
-  }
-  reduce_from_with_pivot(idx,idx,p_idx);
+  pivot_reduction(idx,p_idx);
   basis[idx] = 0; basis[p_idx] = 1;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
@@ -146,12 +142,7 @@ void LCP::lemke_algorithm() {
     }
     // step 5.
     std::cout << p_idx << " " << idx << std::endl;
-    for (int i=0; i<n; i++) {
-      if (i==idx)
-	continue;
-      reduce_from_with_pivot(i,idx,p_idx);
-    }
-    reduce_from_with_pivot(idx,idx,p_idx);
+    pivot_reduction(idx,p_idx);
     basis[idx] = 0; basis[p_idx] = 1;
     std::cout << "COUNTER: " << counter << std::endl;
     print(tableau);
@@ -170,4 +161,14 @@ void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
     for (int j=0; j<m; j++)
       tableau[i][j]-=tableau[idx][j]*bij;
   }
+}
+
+void LCP::pivot_reduction(int& idx, int& p_idx) {
+  int n=q.size();
+  for (int i=0; i<n; i++) {
+    if (i==idx)
+      continue;
+    reduce_from_with_pivot(i,idx,p_idx);
+  }
+  reduce_from_with_pivot(idx,idx,p_idx);
 }
