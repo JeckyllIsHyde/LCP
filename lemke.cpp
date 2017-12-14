@@ -122,37 +122,40 @@ void LCP::lemke_algorithm() {
   basis[idx] = 0; basis[p_idx] = 1;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
-  // step 3. i-row exit and j-column complement enter the basis
-  (idx<n)? idx+=n: idx-=n;
-  std::cout << idx << " exits the basis" << std::endl;
-  std::cout << idx << " enters the basis" << std::endl;
-  // step 4.
-  p_idx = idx;
-  idx = -1;
-  double rmin = 1e18;
-  for (int i=0; i<n; i++)
-    if (tableau[i][2*n+1]/tableau[i][p_idx]<=rmin &&
-	0.0<tableau[i][p_idx]) {
-      idx=i;
-      rmin=tableau[i][2*n+1]/tableau[i][p_idx];
+  int counter=2, max_iter=6;
+  do {
+    // step 3. i-row exit and j-column complement enter the basis
+    (idx<n)? idx+=n: idx-=n;
+    std::cout << idx << " exits the basis" << std::endl;
+    std::cout << idx << " enters the basis" << std::endl;
+    // step 4.
+    p_idx = idx;
+    idx = -1;
+    double rmin = 1e18;
+    for (int i=0; i<n; i++)
+      if (tableau[i][2*n+1]/tableau[i][p_idx]<=rmin &&
+	  0.0<tableau[i][p_idx]) {
+	idx=i;
+	rmin=tableau[i][2*n+1]/tableau[i][p_idx];
+      }
+    std::cout << rmin << std::endl;
+    std::cout << "out: " << idx << std::endl;
+    if (idx==-1) {
+      std::cout << "Ray Solution!!!\n";
+      return;
     }
-  std::cout << rmin << std::endl;
-  std::cout << "out: " << idx << std::endl;
-  if (idx==-1) {
-    std::cout << "Ray Solution!!!\n";
-    return;
-  }
-  // step 5.
-  std::cout << p_idx << " " << idx << std::endl;
-  for (int i=0; i<n; i++) {
-    if (i==idx)
-      continue;
-    reduce_from_with_pivot(i,idx,p_idx);
-  }
-  reduce_from_with_pivot(idx,idx,p_idx);
-  basis[idx] = 0; basis[p_idx] = 1;
-  std::cout << "COUNTER: " << 2 << std::endl;
-  print(tableau);
+    // step 5.
+    std::cout << p_idx << " " << idx << std::endl;
+    for (int i=0; i<n; i++) {
+      if (i==idx)
+	continue;
+      reduce_from_with_pivot(i,idx,p_idx);
+    }
+    reduce_from_with_pivot(idx,idx,p_idx);
+    basis[idx] = 0; basis[p_idx] = 1;
+    std::cout << "COUNTER: " << counter << std::endl;
+    print(tableau);
+  } while(counter++<max_iter);
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
