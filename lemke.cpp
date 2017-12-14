@@ -150,7 +150,7 @@ void LCP::lemke_algorithm() {
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
-  int n = q.size();
+  int n = tableau.size();
   int m = 2*n+2;
   double pivot = tableau[idx][p_idx];
   if (i==idx)
@@ -164,7 +164,7 @@ void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
 }
 
 void LCP::pivot_reduction(int& idx, int& p_idx) {
-  int n=q.size();
+  int n = tableau.size();
   for (int i=0; i<n; i++) {
     if (i==idx)
       continue;
