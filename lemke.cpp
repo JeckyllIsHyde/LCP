@@ -4,7 +4,7 @@
 typedef std::vector<double> Array1D;
 typedef std::vector<Array1D> Array2D;
 
-void print(Array1D& v);
+template<typename T> void print(T& v);
 void print(Array2D& m);
 
 struct LCP {
@@ -35,7 +35,7 @@ int main() {
   return 0;
 }
 
-void print(Array1D& v) {
+template<typename T>void print(T& v) {
   for (int i=0; i<v.size(); i++)
     std::cout << v[i] << " ";
   std::cout << std::endl;
@@ -93,6 +93,7 @@ void LCP::lemke_algorithm() {
   std::vector<unsigned int> basis(2*n+1,0.0);
   for (int i=0; i<n; i++)
     basis[i]=1.0;
+  std::cout << "basis:\n";  print(basis);
 
   // step 1. z0 -> Basis:
   int row_p = -1;
@@ -122,8 +123,8 @@ void LCP::lemke_algorithm() {
   int counter=2, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
-    (idx<n)? idx+=n: idx-=n;
     std::cout << idx << " exits the basis" << std::endl;
+    (idx<n)? idx+=n: idx-=n;
     std::cout << idx << " enters the basis" << std::endl;
     // step 4.
     p_idx = idx;
