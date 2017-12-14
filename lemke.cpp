@@ -149,26 +149,26 @@ void LCP::lemke_algorithm() {
   } while(counter++<max_iter);
 }
 
-void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
+void LCP::reduce_from_with_pivot(int row_i, int row_p, int col_p) {
   int n = tableau.size();
   int m = 2*n+2;
-  double pivot = tableau[idx][p_idx];
-  if (i==idx)
+  double pivot = tableau[row_p][col_p];
+  if (row_i==row_p)
     for (int j=0; j<m; j++)
-      tableau[idx][j]/=pivot;
+      tableau[row_p][j]/=pivot;
   else {
-    double bij=tableau[i][p_idx]/pivot;
+    double bij=tableau[row_i][col_p]/pivot;
     for (int j=0; j<m; j++)
-      tableau[i][j]-=tableau[idx][j]*bij;
+      tableau[row_i][j]-=tableau[row_p][j]*bij;
   }
 }
 
-void LCP::pivot_reduction(int& idx, int& p_idx) {
+void LCP::pivot_reduction(int& row_p, int& col_p) {
   int n = tableau.size();
   for (int i=0; i<n; i++) {
-    if (i==idx)
+    if (i==row_p)
       continue;
-    reduce_from_with_pivot(i,idx,p_idx);
+    reduce_from_with_pivot(i,row_p,col_p);
   }
-  reduce_from_with_pivot(idx,idx,p_idx);
+  reduce_from_with_pivot(row_p,row_p,col_p);
 }
