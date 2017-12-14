@@ -94,7 +94,7 @@ void LCP::lemke_algorithm() {
 
   // step 1. z0 -> Basis:
   int idx = -1;
-  double qmin = tableau[0][2*n+2];
+  double qmin = 1e18;
   //    exist(qi<0) and argmin_i qi
   for (int i=0; i<n; i++)
     if (tableau[i][2*n+1]<qmin && tableau[i][2*n+1]<0.0) {
@@ -126,12 +126,12 @@ void LCP::lemke_algorithm() {
   // step 4.
   p_idx = idx;
   idx = -1;
-  double rmin = tableau[0][2*n+2]/tableau[0][p_idx];
+  double rmin = 1e18;
   for (int i=0; i<n; i++)
-    if (tableau[i][2*n+2]/tableau[i][p_idx]<=rmin &&
-        0.0<tableau[i][p_idx]) {
+    if (tableau[i][2*n+1]/tableau[i][p_idx]<=rmin &&
+	0.0<tableau[i][p_idx]) {
       idx=i;
-      rmin=tableau[i][2*n+2]/tableau[i][p_idx];
+      rmin=tableau[i][2*n+1]/tableau[i][p_idx];
     }
   std::cout << rmin << std::endl;
   std::cout << "out: " << idx << std::endl;
@@ -139,7 +139,6 @@ void LCP::lemke_algorithm() {
     std::cout << "Ray Solution!!!\n";
     return;
   }
-  
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
