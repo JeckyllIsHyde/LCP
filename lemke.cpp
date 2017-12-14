@@ -114,11 +114,11 @@ void LCP::lemke_algorithm() {
   int idx, p_idx, col_p = 2*n;
   // step 2. row operations in idx-row to enter basis
   pivot_reduction( row_p, col_p );
-  idx = row_p;
-  p_idx = col_p;
-  basis[idx] = 0; basis[p_idx] = 1;
+  basis[row_p] = 0; basis[col_p] = 1;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
+  idx = row_p;
+  p_idx = col_p;
   int counter=2, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
