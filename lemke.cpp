@@ -118,6 +118,7 @@ void LCP::lemke_algorithm() {
   basis[row_p] = 0; basis[col_p] = 1;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
+  std::cout << "basis:\n";  print(basis);
   idx = row_p;
   p_idx = col_p;
   int counter=2, max_iter=6;
@@ -148,6 +149,7 @@ void LCP::lemke_algorithm() {
     basis[idx] = 0; basis[p_idx] = 1;
     std::cout << "COUNTER: " << counter << std::endl;
     print(tableau);
+    std::cout << "basis:\n";  print(basis);
   } while(counter++<max_iter);
 }
 
