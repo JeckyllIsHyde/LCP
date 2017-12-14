@@ -142,6 +142,17 @@ void LCP::lemke_algorithm() {
     std::cout << "Ray Solution!!!\n";
     return;
   }
+  // step 5.
+  std::cout << p_idx << " " << idx << std::endl;
+  for (int i=0; i<n; i++) {
+    if (i==idx)
+      continue;
+    reduce_from_with_pivot(i,idx,p_idx);
+  }
+  reduce_from_with_pivot(idx,idx,p_idx);
+  basis[idx] = 0; basis[p_idx] = 1;
+  std::cout << "COUNTER: " << 2 << std::endl;
+  print(tableau);
 }
 
 void LCP::reduce_from_with_pivot(int i, int idx, int p_idx) {
