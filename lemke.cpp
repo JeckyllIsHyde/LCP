@@ -127,31 +127,35 @@ void LCP::lemke_algorithm() {
     return;
   }
   // z0 -> Basis and basis -> wi
-  int col_p = 2*n, row_z0, col_z0 = col_p;
+  int col_p = 2*n, row_z0, col_z0 = col_p, row_p_old;
   // step 2. row operations in idx-row to enter basis
   pivot_reduction( row_p, col_p );
-  row_z0 = row_p;
+  row_z0 = row_p_old = row_p;
 
   int counter=1, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
-    std::cout << "  ***************************" << std::endl;
+    std::cout << "  *********************************" << std::endl;
     std::cout << "TABLEAU " << counter
-	      << ": ( Enters: " << ( (col_p<n)?
-				     "w" + std::to_string(col_p+1):
-				     (col_p<2*n)?
-				     "z" + std::to_string(col_p-n+1):
-				     "z0" )
-	      << " Leaves: " << ( (row_p==row_z0 && col_p!=col_z0)?
-				  "z0":
-				  (col_p<n)?
-				  "z" + std::to_string(row_p+1):
-				  "w" + std::to_string(row_p+1) )
+	      << ": ( Enters: "
+	      << ( (col_p<n)?
+		   "w" + std::to_string(col_p+1):
+		   (col_p<2*n)?
+		   "z" + std::to_string(col_p-n+1):
+		   "z0" )
+	      << ", Leaves: "
+	      << ( (row_p_old==row_z0
+		    && col_p!=col_z0)?
+		   "z0":
+		   (basis[0][row_p_old]==1)?
+		   "z" + std::to_string(basis[0][row_p_old]+1):
+		   "w" + std::to_string(basis[0][row_p_old]+1) )
 	      << " )"
 	      << std::endl;
     print(tableau);
     std::cout << "basis:\n";  print(basis);
     // step 4.
+    row_p_old = row_p;
     row_p = -1;
     double rmin = 1e18;
     for (int i=0; i<n; i++)
