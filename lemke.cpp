@@ -122,11 +122,16 @@ void LCP::lemke_algorithm() {
   int counter=2, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
+    std::cout << "  ***************************" << std::endl;
     std::cout << row_p << " exits the basis" << std::endl;
-    (row_p<n)? row_p+=n: row_p-=n;
+    if (basis[col_p]==0) {
+      col_p=col_p-4;
+      std::cout << "por aca" << std::endl;
+    }
+    else
+      col_p=row_p+n;
     std::cout << col_p << " enters the basis" << std::endl;
     // step 4.
-    col_p = row_p;
     row_p = -1;
     double rmin = 1e18;
     for (int i=0; i<n; i++)
@@ -135,7 +140,7 @@ void LCP::lemke_algorithm() {
 	row_p=i;
 	rmin=tableau[i][2*n+1]/tableau[i][col_p];
       }
-    std::cout << rmin << std::endl;
+    // std::cout << rmin << std::endl;
     std::cout << "out: " << row_p << std::endl;
     if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
