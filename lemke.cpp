@@ -119,34 +119,32 @@ void LCP::lemke_algorithm() {
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
   std::cout << "basis:\n";  print(basis);
-  idx = row_p;
-  p_idx = col_p;
   int counter=2, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
-    std::cout << idx << " exits the basis" << std::endl;
-    (idx<n)? idx+=n: idx-=n;
-    std::cout << idx << " enters the basis" << std::endl;
+    std::cout << row_p << " exits the basis" << std::endl;
+    (row_p<n)? row_p+=n: row_p-=n;
+    std::cout << col_p << " enters the basis" << std::endl;
     // step 4.
-    p_idx = idx;
-    idx = -1;
+    col_p = row_p;
+    row_p = -1;
     double rmin = 1e18;
     for (int i=0; i<n; i++)
-      if (tableau[i][2*n+1]/tableau[i][p_idx]<=rmin &&
-	  0.0<tableau[i][p_idx]) {
-	idx=i;
-	rmin=tableau[i][2*n+1]/tableau[i][p_idx];
+      if (tableau[i][2*n+1]/tableau[i][col_p]<=rmin &&
+	  0.0<tableau[i][col_p]) {
+	row_p=i;
+	rmin=tableau[i][2*n+1]/tableau[i][col_p];
       }
     std::cout << rmin << std::endl;
-    std::cout << "out: " << idx << std::endl;
-    if (idx==-1) {
+    std::cout << "out: " << row_p << std::endl;
+    if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
       return;
     }
     // step 5.
-    std::cout << p_idx << " " << idx << std::endl;
-    pivot_reduction(idx,p_idx);
-    basis[p_idx] = basis[idx]; basis[idx] = 0;
+    std::cout << col_p << " " << row_p << std::endl;
+    pivot_reduction(row_p,col_p);
+    basis[col_p] = basis[row_p]; basis[row_p] = 0;
     std::cout << "COUNTER: " << counter << std::endl;
     print(tableau);
     std::cout << "basis:\n";  print(basis);
