@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 typedef std::vector<double> Array1D;
 typedef std::vector<Array1D> Array2D;
@@ -17,8 +18,8 @@ struct LCP {
   void make_tableau();
   void lemke_algorithm();
 
-  void reduce_from_with_pivot(int i, int idx, int p_idx);
-  void pivot_reduction(int& idx, int& p_idx);
+  void reduce_from_with_pivot(int i, int row_p, int col_p);
+  void pivot_reduction(int& row_p, int& col_p);
 };
 
 int main() {
@@ -112,17 +113,30 @@ void LCP::lemke_algorithm() {
     return;
   }
   // z0 -> Basis and basis -> wi
-  int idx, p_idx, col_p = 2*n;
+  int col_p = 2*n, row_z0, col_z0 = col_p;
   // step 2. row operations in idx-row to enter basis
   pivot_reduction( row_p, col_p );
-  basis[col_p] = basis[row_p]; basis[row_p] = 0;
-  std::cout << "COUNTER: " << 1 << std::endl;
-  print(tableau);
-  std::cout << "basis:\n";  print(basis);
-  int counter=2, max_iter=6;
+  row_z0 = row_p;
+  int counter=1, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
     std::cout << "  ***************************" << std::endl;
+    std::cout << "TABLEAU " << counter
+	      << ": ( Enters: " << ( (col_p<n)?
+				     "w" + std::to_string(col_p+1):
+				     (col_p<2*n)?
+				     "z" + std::to_string(col_p-n+1):
+				     "z0" )
+	      << " Leaves: " << ( (row_p==row_z0 && col_p!=col_z0)?
+				  "z0":
+				  (col_p<n)?
+				  "z" + std::to_string(row_p+1):
+				  "w" + std::to_string(row_p+1) )
+	      << " )"
+	      << std::endl;
+    print(tableau);
+    basis[col_p] = basis[row_p]; basis[row_p] = 0;
+    std::cout << "basis:\n";  print(basis);
     std::cout << row_p << " exits the basis" << std::endl;
     if (basis[col_p]==0) {
       col_p=col_p-4;
@@ -149,10 +163,6 @@ void LCP::lemke_algorithm() {
     // step 5.
     std::cout << col_p << " " << row_p << std::endl;
     pivot_reduction(row_p,col_p);
-    basis[col_p] = basis[row_p]; basis[row_p] = 0;
-    std::cout << "COUNTER: " << counter << std::endl;
-    print(tableau);
-    std::cout << "basis:\n";  print(basis);
   } while(counter++<max_iter);
 }
 
