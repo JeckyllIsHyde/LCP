@@ -92,7 +92,7 @@ void LCP::lemke_algorithm() {
   // create and init basis indicator
   std::vector<unsigned int> basis(2*n+1,0.0);
   for (int i=0; i<n; i++)
-    basis[i]=1.0;
+    basis[i]=i+1.0;
   std::cout << "basis:\n";  print(basis);
 
   // step 1. z0 -> Basis:
@@ -115,7 +115,7 @@ void LCP::lemke_algorithm() {
   int idx, p_idx, col_p = 2*n;
   // step 2. row operations in idx-row to enter basis
   pivot_reduction( row_p, col_p );
-  basis[row_p] = 0; basis[col_p] = 1;
+  basis[col_p] = basis[row_p]; basis[row_p] = 0;
   std::cout << "COUNTER: " << 1 << std::endl;
   print(tableau);
   std::cout << "basis:\n";  print(basis);
@@ -146,7 +146,7 @@ void LCP::lemke_algorithm() {
     // step 5.
     std::cout << p_idx << " " << idx << std::endl;
     pivot_reduction(idx,p_idx);
-    basis[idx] = 0; basis[p_idx] = 1;
+    basis[p_idx] = basis[idx]; basis[idx] = 0;
     std::cout << "COUNTER: " << counter << std::endl;
     print(tableau);
     std::cout << "basis:\n";  print(basis);
