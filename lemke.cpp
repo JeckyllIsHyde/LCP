@@ -5,8 +5,12 @@
 typedef std::vector<double> Array1D;
 typedef std::vector<Array1D> Array2D;
 
+typedef std::vector<unsigned int> Array1UI;
+typedef std::vector<Array1UI> Array2UI;
+
 template<typename T> void print(T& v);
 void print(Array2D& m);
+void print(Array2UI& b);
 
 struct LCP {
   Array1D q;
@@ -45,6 +49,15 @@ template<typename T>void print(T& v) {
 void print(Array2D& m) {
   for (int i=0; i<m.size(); i++)
     print(m[i]);
+}
+
+void print(Array2UI& b) {
+  for (int i=0; i<b[0].size(); i++) {
+    std::cout << ((b[0][i]==0)? "w": "z");
+    std::cout << b[1][i];
+    std::cout << " ";
+  }
+  std::cout << std::endl;
 }
 
 void LCP::read_LCP() {
@@ -91,9 +104,10 @@ void LCP::lemke_algorithm() {
 
   int n = tableau.size();
   // create and init basis indicator
-  std::vector<unsigned int> basis(2*n+1,0.0);
-  for (int i=0; i<n; i++)
-    basis[i]=i+1.0;
+  Array2UI basis( 2, Array1UI( n, 0.0) );
+  for (int i=0; i<n; i++) {
+    basis[0][i]=0.0; basis[1][i]=i+1.0;
+  }
   std::cout << "basis:\n";  print(basis);
 
   // step 1. z0 -> Basis:
@@ -136,16 +150,7 @@ void LCP::lemke_algorithm() {
 	      << " )"
 	      << std::endl;
     print(tableau);
-    basis[col_p] = basis[row_p]; basis[row_p] = 0;
     std::cout << "basis:\n";  print(basis);
-    std::cout << row_p << " exits the basis" << std::endl;
-    if (basis[col_p]==0) {
-      col_p=col_p-n;
-      std::cout << "por aca" << std::endl;
-    }
-    else
-      col_p=row_p+n;
-    std::cout << col_p << " enters the basis" << std::endl;
     // step 4.
     row_p = -1;
     double rmin = 1e18;
@@ -155,14 +160,11 @@ void LCP::lemke_algorithm() {
 	row_p=i;
 	rmin=tableau[i][2*n+1]/tableau[i][col_p];
       }
-    // std::cout << rmin << std::endl;
-    std::cout << "out: " << row_p << std::endl;
     if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
       return;
     }
     // step 5.
-    std::cout << col_p << " " << row_p << std::endl;
     pivot_reduction(row_p,col_p);
   } while(counter++<max_iter);
 }
