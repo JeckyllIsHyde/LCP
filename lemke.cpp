@@ -117,6 +117,7 @@ void LCP::lemke_algorithm() {
   // step 2. row operations in idx-row to enter basis
   pivot_reduction( row_p, col_p );
   row_z0 = row_p;
+
   int counter=1, max_iter=6;
   do {
     // step 3. i-row exit and j-column complement enter the basis
@@ -139,7 +140,7 @@ void LCP::lemke_algorithm() {
     std::cout << "basis:\n";  print(basis);
     std::cout << row_p << " exits the basis" << std::endl;
     if (basis[col_p]==0) {
-      col_p=col_p-4;
+      col_p=col_p-n;
       std::cout << "por aca" << std::endl;
     }
     else
