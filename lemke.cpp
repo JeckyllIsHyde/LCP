@@ -123,7 +123,7 @@ void LCP::lemke_algorithm() {
   tableau.print_status();
 
   int row_p;
-  g
+  
   // step 1.
   // find initial row pivot
   row_p = tableau.find_initial_pivot();
