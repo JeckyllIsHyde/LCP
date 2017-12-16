@@ -24,6 +24,8 @@ struct LCP {
 
   void reduce_from_with_pivot(int i, int row_p, int col_p);
   void pivot_reduction(int& row_p, int& col_p);
+  void find_initial_pivot(int& row_p);
+  void find_pivot(int& row_p, int& col_p);
 };
 
 int main() {
@@ -100,7 +102,6 @@ void LCP::lemke_algorithm() {
   make_tableau();
 
   std::cout << "INITIAL TABLEAU: " << std::endl;
-  print(tableau);
 
   int n = tableau.size();
   // create and init basis indicator
@@ -109,17 +110,12 @@ void LCP::lemke_algorithm() {
     basis[0][i]=0.0; basis[1][i]=i+1.0;
   }
   std::cout << "basis:\n";  print(basis);
+  print(tableau);
+  int col_z0=2*n, row_z0, row_p;
 
-  // step 1. z0 -> Basis:
-  int row_p = -1;
-  double qmin = 1e18;
+  // step 1.
   // find initial row pivot
-  for (int i=0; i<n; i++) // exist(qi<0) and argmin_i qi
-    if (q[i]<=qmin
-	&& q[i]<0.0) {
-      row_p = i;
-      qmin = q[i];
-    }
+  find_initial_pivot(row_p);
   // std::cout << qmin << std::endl;
   if (row_p==-1) {
     std::cout << "Find Solution!!!\nz = ";
@@ -127,49 +123,37 @@ void LCP::lemke_algorithm() {
     return;
   }
   // z0 -> Basis and basis -> wi
-  int col_p = 2*n, row_z0, col_z0 = col_p, row_p_old;
+  int row_p_old;
+  basis[0][row_p] = 1;
+  basis[1][row_p] = row_z0 = row_p;
+  row_p_old = row_p;
+  int col_p = col_z0;
+
   // step 2. row operations in idx-row to enter basis
-  pivot_reduction( row_p, col_p );
+  pivot_reduction( row_p, col_z0 );
   row_z0 = row_p_old = row_p;
 
-  int counter=1, max_iter=6;
+  std::cout << "TABLEAU " << 1 << std::endl;
+  std::cout << "basis:\n";  print(basis);
+  print(tableau);
+
+  int counter=2, max_iter=3;
   do {
-    // step 3. i-row exit and j-column complement enter the basis
-    std::cout << "  *********************************" << std::endl;
-    std::cout << "TABLEAU " << counter
-	      << ": ( Enters: "
-	      << ( (col_p<n)?
-		   "w" + std::to_string(col_p+1):
-		   (col_p<2*n)?
-		   "z" + std::to_string(col_p-n+1):
-		   "z0" )
-	      << ", Leaves: "
-	      << ( (row_p_old==row_z0
-		    && col_p!=col_z0)?
-		   "z0":
-		   (basis[0][row_p_old]==1)?
-		   "z" + std::to_string(basis[0][row_p_old]+1):
-		   "w" + std::to_string(basis[0][row_p_old]+1) )
-	      << " )"
-	      << std::endl;
-    print(tableau);
-    std::cout << "basis:\n";  print(basis);
+    // step 3. with row_p_old exit find complement enter the basis
+
     // step 4.
-    row_p_old = row_p;
-    row_p = -1;
-    double rmin = 1e18;
-    for (int i=0; i<n; i++)
-      if (tableau[i][2*n+1]/tableau[i][col_p]<=rmin &&
-	  0.0<tableau[i][col_p]) {
-	row_p=i;
-	rmin=tableau[i][2*n+1]/tableau[i][col_p];
-      }
+    //    row_p_old = row_p;
+    find_pivot( row_p, col_p );
     if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
       return;
     }
+
     // step 5.
     pivot_reduction(row_p,col_p);
+    std::cout << "TABLEAU " << counter << std::endl;
+    std::cout << "basis:\n"; print(basis);
+    print(tableau);
   } while(counter++<max_iter);
 }
 
@@ -195,4 +179,27 @@ void LCP::pivot_reduction(int& row_p, int& col_p) {
     reduce_from_with_pivot(i,row_p,col_p);
   }
   reduce_from_with_pivot(row_p,row_p,col_p);
+}
+
+void LCP::find_pivot(int& row_p, int& col_p) {
+  int n = tableau.size();
+  row_p = -1;
+  double rmin = 1e18;
+  for (int i=0; i<n; i++)
+    if (tableau[i][2*n+1]/tableau[i][col_p]<=rmin &&
+	0.0<tableau[i][col_p]) {
+      row_p=i;
+      rmin=tableau[i][2*n+1]/tableau[i][col_p];
+    }
+}
+
+void LCP::find_initial_pivot(int& row_p) {
+  row_p = -1;
+  double qmin = 1e18;
+  for (int i=0; i<q.size(); i++) // exist(qi<0) and argmin_i qi
+    if (q[i]<=qmin
+	&& q[i]<0.0) {
+      row_p = i;
+      qmin = q[i];
+    }
 }
