@@ -26,6 +26,7 @@ struct Tableau {
   void print_elem(const Array1UI& b);
   void print_sol();
   void print_status();
+  void print_status(int ctr, const Array1UI& bi, const Array1UI& bo);
   int find_initial_pivot();
   int find_pivot(int col_p);
   void reduce_from_with_pivot(int i, int row_p, int col_p);
@@ -147,12 +148,7 @@ void LCP::lemke_algorithm() {
     // b_i -> Basis -> b_o
     Array1UI b_i=tableau.elem_from_col( col_p );
     Array1UI b_o = tableau.change_in( row_p, b_i );
-    std::cout << "TABLEAU " << counter;
-    std::cout << ": ("; tableau.print_elem(b_i);
-    std::cout << "->B->"; tableau.print_elem(b_o);
-    std::cout << ")" << std::endl;
-    std::cout << "basis:\n";  print(tableau.basis);
-    print(tableau.data);
+    tableau.print_status(counter, b_i, b_o);
     // find complement
     b_o[0] = (b_o[0]==0 && b_o[1]!=0)? 1: 0;
     col_p = tableau.col_from_elem( b_o );
@@ -215,6 +211,17 @@ void Tableau::print_elem(const Array1UI& b) {
 }
 
 void Tableau::print_status() {
+  std::cout << "basis:\n"; print(basis);
+  print(data);
+}
+
+void Tableau::print_status( int counter,
+			    const Array1UI& b_i,
+			    const Array1UI& b_o ) {
+  std::cout << "TABLEAU " << counter;
+  std::cout << ": ("; print_elem(b_i);
+  std::cout << "->B->"; print_elem(b_o);
+  std::cout << ")" << std::endl;
   std::cout << "basis:\n"; print(basis);
   print(data);
 }
