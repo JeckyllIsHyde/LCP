@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cassert>
 
 typedef std::vector<double> Array1D;
 typedef std::vector<Array1D> Array2D;
@@ -18,6 +19,12 @@ struct Tableau {
   int q_col, z0_col, z0_row;
   int n_rows, n_cols;
 
+  Array1UI get_elem_from_basis(unsigned int i);
+  Array1UI elem_from_col(unsigned int i);
+  int col_from_elem(const Array1UI& b);
+  Array1UI change_in(unsigned int i, const Array1UI& b);
+  void print_elem(const Array1UI& b);
+  void print_sol();
   void print_status();
   int find_initial_pivot();
   int find_pivot(int col_p);
@@ -122,38 +129,40 @@ void LCP::lemke_algorithm() {
   std::cout << "INITIAL TABLEAU: " << std::endl;
   tableau.print_status();
 
-  int row_p;
-  
   // step 1.
   // find initial row pivot
-  row_p = tableau.find_initial_pivot();
-  // std::cout << qmin << std::endl;
+  int row_p = tableau.find_initial_pivot();
+  int col_p = tableau.z0_col;
   if (row_p==-1) {
-    std::cout << "Find Solution!!!\nz = ";
-    print(q);
+    std::cout << "Find Solution!!!\nz = "; print(q);
     return;
   }
-  // z0 -> Basis and basis -> wi
-  int row_p_old;
-  tableau.basis[0][row_p] = 1;
-  tableau.basis[1][row_p] = row_p;
-  row_p_old = row_p;
-  int col_p = tableau.z0_row;
 
   // step 2. row operations in idx-row to enter basis
-  tableau.pivot_reduction( tableau.z0_row, tableau.z0_col );
-  row_p_old = row_p;
+  tableau.pivot_reduction( row_p, col_p );
 
-  std::cout << "TABLEAU " << 1 << std::endl;
-  std::cout << "basis:\n";  print(tableau.basis);
-  print(tableau.data);
-
-  int counter=2, max_iter=2;
+  int counter=1, max_iter=6;
   do {
     // step 3. with row_p_old exit find complement enter the basis
+    // b_i -> Basis -> b_o
+    Array1UI b_i=tableau.elem_from_col( col_p );
+    Array1UI b_o = tableau.change_in( row_p, b_i );
+    std::cout << "TABLEAU " << counter;
+    std::cout << ": ("; tableau.print_elem(b_i);
+    std::cout << "->B->"; tableau.print_elem(b_o);
+    std::cout << ")" << std::endl;
+    std::cout << "basis:\n";  print(tableau.basis);
+    print(tableau.data);
+    // find complement
+    b_o[0] = (b_o[0]==0 && b_o[1]!=0)? 1: 0;
+    col_p = tableau.col_from_elem( b_o );
 
     // step 4.
-    //    row_p_old = row_p;
+    // exit condition
+    if (row_p==tableau.z0_row && 1<counter) {
+      std::cout << "Find Solution!!!\nz = "; tableau.print_sol();
+      return;
+    }
     row_p = tableau.find_pivot( col_p );
     if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
@@ -162,14 +171,58 @@ void LCP::lemke_algorithm() {
 
     // step 5.
     tableau.pivot_reduction(row_p,col_p);
-    std::cout << "TABLEAU " << counter << std::endl;
-    tableau.print_status();
   } while(counter++<max_iter);
+  std::cout << "Max iteration done!!!\n";
+}
+
+Array1UI Tableau::get_elem_from_basis(unsigned int i) {
+  assert( i<n_rows );
+  Array1UI e(2,0);
+  e[0] = basis[0][i];
+  assert((e[0]==0)||(e[0]==1));
+  e[1] = basis[1][i];
+  return e;
+}
+
+Array1UI Tableau::elem_from_col(unsigned int i) {
+  assert( i<n_cols-1 );
+  Array1UI e(2,0);
+  e[0] = (i<n_rows)? 0: 1;
+  i = ( i<n_rows )? i+1:
+    ( i<2*n_rows )? i+1-n_rows: 0;
+  assert((e[0]==0)||(e[0]==1));
+  assert( i<=n_rows );
+  e[1] = i;
+  return e;
+}
+
+int Tableau::col_from_elem(const Array1UI& b) {
+  return ( (b[0]==0)? b[1]-1:
+	   (b[0]==1 && 0<b[1])?
+	   b[1]+n_rows-1:
+	   z0_col );
+}
+
+Array1UI Tableau::change_in(unsigned int i, const Array1UI& b) {
+  Array1UI b_o = get_elem_from_basis( i );
+  basis[0][i] = b[0];
+  basis[1][i] = b[1];
+  return b_o;
+}
+
+void Tableau::print_elem(const Array1UI& b) {
+  std::cout << ( (b[0]==0)? "w": "z" ) << b[1];
 }
 
 void Tableau::print_status() {
   std::cout << "basis:\n"; print(basis);
   print(data);
+}
+
+void Tableau::print_sol() {
+  for (int i=0; i<n_rows; i++)
+	std::cout << data[i][q_col] << " ";
+  std::cout << std::endl;
 }
 
 void Tableau::reduce_from_with_pivot(int row_i, int row_p, int col_p) {
