@@ -138,10 +138,8 @@ void LCP::lemke_algorithm() {
     std::cout << "Find Solution!!!\nz = "; print(q);
     return;
   }
-
   // step 2. row operations in idx-row to enter basis
   tableau.pivot_reduction( row_p, col_p );
-
   int counter=1, max_iter=6;
   do {
     // step 3. with row_p_old exit find complement enter the basis
@@ -152,19 +150,17 @@ void LCP::lemke_algorithm() {
     // find complement
     b_o[0] = (b_o[0]==0 && b_o[1]!=0)? 1: 0;
     col_p = tableau.col_from_elem( b_o );
-
-    // step 4.
     // exit condition
     if (row_p==tableau.z0_row && 1<counter) {
       std::cout << "Find Solution!!!\nz = "; tableau.print_sol();
       return;
     }
+    // step 4.
     row_p = tableau.find_pivot( col_p );
     if (row_p==-1) {
       std::cout << "Ray Solution!!!\n";
       return;
     }
-
     // step 5.
     tableau.pivot_reduction(row_p,col_p);
   } while(counter++<max_iter);
