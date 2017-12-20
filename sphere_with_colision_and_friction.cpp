@@ -120,11 +120,12 @@ void PhysicsEngine::lcpCollision( double dt ) {
   std::cout << "D:\n" << D << std::endl;
   std::cout << "N:\n" << N << std::endl;
   std::cout << "e:\n" << e << std::endl;
-  std::cout << "[D.T*M_*D | D.T*M_*N | e]:\n"
+  std::cout << "[D.T*M_*D | D.T*M_*N | e]\n"
 	    << "[N.T*M_*D | N.T*M_*N | 0]:\n"
-	    << "[-e.T     | mu       | 0]:\n"
+	    << "[-e.T     | mu       | 0]\n"
 	    << M
 	    << std::endl
+	    << "[D.T*V   ]\n[N.T*(q/dt+V)]:\n[0]\n"
 	    << b
 	    << std::endl;
 }
