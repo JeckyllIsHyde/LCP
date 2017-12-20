@@ -1,4 +1,6 @@
 # ignored files
 lemke
 *~
+*.dat
 test_lemke
+test_sphere
