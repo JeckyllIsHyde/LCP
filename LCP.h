@@ -6,6 +6,8 @@
 #include <string>
 #include <cassert>
 
+#include "LittleMath.h"
+
 typedef std::vector<double> Array1D;
 typedef std::vector<Array1D> Array2D;
 
@@ -39,8 +41,23 @@ struct Tableau {
 struct LCP {
   Array1D q;
   Array2D M;
+  bool is_verbose = true;
 
   void read_LCP(void);
+  template< template<typename,size_t,size_t>
+    class MatT,typename T,size_t NN>
+    void read_LCP(MatT<T,NN,1>& b,MatT<T,NN,NN>& M_) {
+    // problem size
+    q.resize(NN,0.0);
+    M.resize(NN,Array1D(NN,0.0));
+    // set q vector
+    for (int i=0; i<NN; i++)
+      q[i] = b(i,0);
+    // set M vector
+    for (int i=0; i<NN; i++)
+      for (int j=0; j<NN; j++)
+	M[i][j] = M_(i,j);
+  }
   void print_LCP(void);
   void make_tableau(Tableau& tableau);
   void lemke_algorithm(void);
@@ -116,20 +133,22 @@ void LCP::lemke_algorithm() {
 
   make_tableau(tableau);
 
-  std::cout << "INITIAL TABLEAU: " << std::endl;
-  tableau.print_status();
-
+  if (is_verbose) {
+    std::cout << "INITIAL TABLEAU: " << std::endl;
+    tableau.print_status();
+  }
   // step 1.
   // find initial row pivot
   int row_p = tableau.find_initial_pivot();
   int col_p = tableau.z0_col;
   if (row_p==-1) {
-    std::cout << "Find Solution!!!\nz = "; print(q);
+    if (is_verbose) {
+      std::cout << "Find Solution!!!\nz = "; print(q);}
     return;
   }
   // step 2. row operations in idx-row to enter basis
   tableau.pivot_reduction( row_p, col_p );
-  int counter=1, max_iter=6;
+  int counter=1, max_iter=100;
   do {
     // step 3. with row_p_old exit find complement enter the basis
     // b_i -> Basis -> b_o
@@ -141,19 +160,22 @@ void LCP::lemke_algorithm() {
     col_p = tableau.col_from_elem( b_o );
     // exit condition
     if (row_p==tableau.z0_row && 1<counter) {
-      std::cout << "Find Solution!!!\nz = "; tableau.print_sol();
+      if (is_verbose) {
+	std::cout << "Find Solution!!!\nz = "; tableau.print_sol();}
       return;
     }
     // step 4.
     row_p = tableau.find_pivot( col_p );
     if (row_p==-1) {
-      std::cout << "Ray Solution!!!\n";
+      if (is_verbose) {
+	std::cout << "Ray Solution!!!\n";}
       return;
     }
     // step 5.
     tableau.pivot_reduction(row_p,col_p);
   } while(counter++<max_iter);
-  std::cout << "Max iteration done!!!\n";
+  if (is_verbose)
+    std::cout << "Max iteration done!!!\n";
 }
 
 Array1UI Tableau::get_elem_from_basis(unsigned int i) {
