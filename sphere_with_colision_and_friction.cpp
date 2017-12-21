@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "LittleMath.h"
+#include "LCP.h"
 
 const double dt = 0.0025;
-const double tmax = 5*dt;//1.5;
+const double tmax = 1.5;
 
 const double MASS = 1.0, J = 0.002;
 const double TH0 = 30.*M_PI/180;
@@ -62,12 +63,6 @@ void init_engine_simple_sphere( PhysicsEngine& engine ) {
   engine.body.v(0) = 0.0; // angular velocity 
   engine.body.v(1) = 0.5; // x-axis linear velocity 
   engine.body.v(2) = 0.0; // y-axis linear velocity
-
-  std::cout << "v: " << engine.body.v << std::endl;
-  std::cout << "a: " << engine.body.a << std::endl;
-  std::cout << "f: " << engine.body.f << std::endl;
-
-  std::cout << "X: " << engine.body.X << std::endl;
 }
 
 void PhysicsEngine::update( double dt ) {
@@ -94,10 +89,13 @@ void PhysicsEngine::lcpCollision( double dt ) {
   MatrixT<double,3,3> M_;
   M_(0,0) = 1./body.mInertia; M_(1,1) = M_(2,2) = 1./body.mMass;
   MatrixT<double,3,2> D;
-  D(0,0) = 1.0; D(0,1) =-1.0; D(1,0) = D(1,1) = 0.0;
+  D(0,0) = D(0,1) = 0.0;
+  D(1,0) = 1.0; D(1,1) =-1.0;
   D(2,0) = D(2,1) = 0.0;
   MatrixT<double,3,1> N;
-  N(0,0) = 1.0; N(1,0) = N(2,0) = 0.0;
+  N(0,0) = 0.0;
+  N(1,0) = 1.0;
+  N(2,0) = 0.0;
   MatrixT<double,2,1> e;
   e(0,0) = e(1,0) = 1.0;
   MatrixT<double,1,1> z;
@@ -115,7 +113,12 @@ void PhysicsEngine::lcpCollision( double dt ) {
 			 ( (e.transpose()*(-1.0)).cath(mu).cath(z)));
   MatrixT<double,4,1> b( ( D.transpose()*V ).catv
 			 ( N.transpose()*(q/dt+V)).catv(z));
-      
+
+  LCP contact_problem;
+  contact_problem.read_LCP( b,M );
+  contact_problem.is_verbose = true;
+  contact_problem.lemke_algorithm();
+  /*
   std::cout << "M_:\n" << M_ << std::endl;
   std::cout << "D:\n" << D << std::endl;
   std::cout << "N:\n" << N << std::endl;
@@ -128,6 +131,7 @@ void PhysicsEngine::lcpCollision( double dt ) {
 	    << "[D.T*V   ]\n[N.T*(q/dt+V)]:\n[0]\n"
 	    << b
 	    << std::endl;
+  */
 }
 
 void PhysicsEngine::printData( double t ) {
